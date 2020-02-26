@@ -2,40 +2,48 @@ import React, { Component } from "react";
 import "./App.css";
 
 // the actual quiz
-const questions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const answers = ["un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix"];
+const questions = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
+const answers = ["zero", "ichi", "ni", "san", "yon", "go", "roku", "shichi", "hachi", "kyuu", "jyuu"];
+const min = 0;
+const max = 10;
+const rand = Math.round(min + Math.random() * (max - min));
 function getCount() {
   return questions.length;
 }
 function getQuestion(i) {
   return (
     <div>
-      How do you say <span style={{ color: "red" }}>{questions[i - 1]}</span> en français?
+      <span style={{ color: "red" }}>{questions[i]}</span> in japanese?
     </div>
   );
 }
 function getAnswer(i) {
-  return answers[i - 1];
+  return answers[i];
 }
 // the actual quiz is done, boring stuff follows...
 
 class App extends Component {
   constructor() {
     super();
+
+    // console.log(rand);
+
     this.state = {
-      question: getQuestion(1),
-      answer: getAnswer(1),
+      question: getQuestion(rand),
+      answer: getAnswer(rand),
       total: getCount(),
-      i: 1
+      i: rand
     };
   }
 
   nextQuestion() {
+    console.log(this.state.i);
     this.setState({
-      question: getQuestion(this.state.i + 1),
-      answer: getAnswer(this.state.i + 1),
-      i: this.state.i + 1
+      question: getQuestion((this.state.i + 1) % this.state.total),
+      answer: getAnswer((this.state.i + 1) % this.state.total),
+      i: (this.state.i + 1) % this.state.total
     });
+    console.log(this.state.i);
   }
 
   render() {
@@ -43,9 +51,11 @@ class App extends Component {
       <div>
         {this.state.total ? <Count i={this.state.i} total={this.state.total} /> : null}
         <Flashcard question={this.state.question} answer={this.state.answer} />
-        {this.state.total && this.state.i >= this.state.total ? null : (
+        {this.state.total && this.state.i > this.state.total ? (
+          console.log("rewinding")
+        ) : (
           <button className="nextButton" onClick={this.nextQuestion.bind(this)}>
-            next...
+            Next Question
           </button>
         )}
       </div>
@@ -97,7 +107,7 @@ class Flashcard extends Component {
 
 const Count = ({ i, total }) => (
   <div>
-    Question {i} / {total}
+    Question {i} / {total - 1}
   </div>
 );
 
